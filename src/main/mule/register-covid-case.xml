@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="34b88d8b-6ad2-4190-813d-77a228b95501" basePath="covid" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="register-covid-caseFlow" doc:id="4a076454-e239-4928-9e6a-66326beaeef0" >
+		<http:listener doc:name="Listener" doc:id="7d0514e2-e543-4ea1-9ea2-82607cce0258" config-ref="HTTP_Listener_config" path="v1/cases" allowedMethods="POST">
+			<http:response statusCode="#[vars.statusCode]" reasonPhrase="#[vars.httpReason]">
+			</http:response>
+		</http:listener>
+		<logger level="INFO" doc:name="Logger" doc:id="71389144-cb6f-4cba-a2c0-c0c1f5b0f08f" message="#[payload.source]"/>
+		<set-variable value="#[payload.firstName]" doc:name="Set Variable" doc:id="13e580ac-95bf-4100-8d01-00ab20570cfe" variableName="userName" />
+		<logger level="INFO" doc:name="Logger" doc:id="17f0d766-3b43-4acf-8ee3-35ed92da58e3" message="#[vars.userName]" />
+		<set-payload value='#["success"]' doc:name="Set Payload" doc:id="6e64b0c2-fb51-4a32-a645-93ca913a6420" />
+		<set-variable value="200" doc:name="Set Variable" doc:id="94019818-e4a4-4ca7-86f5-876de7657f68" variableName="statusCode"/>
+		<set-variable value='#["OK"]' doc:name="Set Variable" doc:id="ccab33b3-7e9a-46d0-9557-bfc607e754bc" variableName="httpReason"/>
+	</flow>
+</mule>

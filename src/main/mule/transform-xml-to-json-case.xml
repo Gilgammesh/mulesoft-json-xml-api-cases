@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="transform-xml-to-json-caseFlow" doc:id="40f5371c-0701-435e-9d9f-d2a98691fc77" >
+		<http:listener doc:name="Listener" doc:id="e55dcafd-f545-4332-8ef8-49c1aec15b1a" config-ref="HTTP_Listener_config" path="transform-xml-to-json"/>
+		<logger level="INFO" doc:name="Logger before transform" doc:id="9107f9ef-1db4-4dc9-b002-7f4193240d5c" message="#[payload]"/>
+		<ee:transform doc:name="Transform Message" doc:id="6cca76f8-cb8d-416f-8c2f-6cf5a447a249" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	source: payload.covidCase.source,
+	caseType: payload.covidCase.caseType,
+	firstName: payload.covidCase.firstName,
+	lastName: payload.covidCase.lastName,
+	fullName: payload.covidCase.firstName ++ " " ++ payload.covidCase.lastName,
+	phone: payload.covidCase.phone,
+	email: payload.covidCase.email,
+	dateOfBirth: payload.covidCase.dateOfBirth as String,
+	nationalID: payload.covidCase.nationalID,
+	nationalIDType: payload.covidCase.nationalIDType,
+	address: {
+		streetAddress: payload.covidCase.address.streetAddress,
+		city: payload.covidCase.address.city,
+		state: payload.covidCase.address.state,
+		postal: payload.covidCase.address.postal as String,
+		country: payload.covidCase.address.country
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger after transform" doc:id="c1af3220-5f3c-4a9f-8b76-b07bfe43516c" message="#[payload]"/>
+	</flow>
+</mule>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="transform-json-to-xml-caseFlow" doc:id="d191972e-d0a8-48a0-818c-78e67cd43741" >
+		<http:listener doc:name="Listener" doc:id="43c8d0ae-bd14-4d32-9b14-5fd6fccee5f1" config-ref="HTTP_Listener_config" path="transform-json-to-xml"/>
+		<logger level="INFO" doc:name="Logger before transform" doc:id="d403d741-d994-420e-a886-040011233703" message="#[payload]"/>
+		<ee:transform doc:name="Transform Message" doc:id="5dcbc916-619e-4e5d-a846-4115fe847be4" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+---
+{
+	COVID_CASE: {
+		FIRST_NAME: payload.firstName,
+		LAST_NAME: payload.lastName,
+		PHONE: payload.phone,
+		EMAIL: payload.email,
+		DATE_OF_BIRTH: payload.dateOfBirth as Date,
+		COUNTRY: payload.address.country
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger after transform" doc:id="c035010e-e91c-4efd-8ec7-c9e150d177d0" message="#[payload]"/>
+	</flow>
+</mule>

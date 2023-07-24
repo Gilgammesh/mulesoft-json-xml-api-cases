@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="input-meta-data" format="json">
+      <types:shape format="weave" example="examples/register-covid-case-request-payload.json"><![CDATA[%dw 2.0
+
+type input_meta_data = {|
+  source: String, 
+  caseType: String, 
+  firstName: String, 
+  lastName: String, 
+  phone: String, 
+  email: String, 
+  dateOfBirth: String, 
+  nationalID: String, 
+  nationalIDType: String, 
+  address: {|
+    streetAddress: String, 
+    city: String, 
+    state: String, 
+    postal: String, 
+    country: String
+  |}
+|} {"example": "{\\\"source\\\":\\\"Hospital1\\\",\\\"caseType\\\":\\\"positive\\\",\\\"firstName\\\":\\\"John\\\",\\\"lastName\\\":\\\"Nixon\\\",\\\"phone\\\":\\\"541-754-3010\\\",\\\"email\\\":\\\"john@gmail.com\\\",\\\"dateOfBirth\\\":\\\"1989-04-26\\\",\\\"nationalID\\\":\\\"209-49-6193\\\",\\\"nationalIDType\\\":\\\"SSN\\\",\\\"address\\\":{\\\"streetAddress\\\":\\\"1600 Pennsylvania Avenue NW\\\",\\\"city\\\":\\\"Dallas\\\",\\\"state\\\":\\\"TX\\\",\\\"postal\\\":\\\"20500\\\",\\\"country\\\":\\\"USA\\\"}}"}
+
+]]></types:shape>
+    </types:type>
+    <types:type name="output-meta-data" format="xml">
+      <types:example format="xml" element="COVID_CASE" location="examples/who-covid-case-request-payload.xml"/>
+    </types:type>
+    <types:type name="input-xml-meta-data" format="xml">
+      <types:example format="xml" element="covidCase" location="examples/update-covid-case-payload.xml"/>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#5dcbc916-619e-4e5d-a846-4115fe847be4">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="input-meta-data"/>
+        </types:message>
+      </types:input-event>
+      <types:output-event>
+        <types:message>
+          <types:payload type="output-meta-data"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#6cca76f8-cb8d-416f-8c2f-6cf5a447a249">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="input-xml-meta-data"/>
+        </types:message>
+      </types:input-event>
+      <types:output-event>
+        <types:message>
+          <types:payload type="input-meta-data"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+</types:mule>
