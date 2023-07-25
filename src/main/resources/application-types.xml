@@ -60,4 +60,5 @@ type input_meta_data = {|
       </types:output-event>
     </types:processor-declaration>
   </types:enrichment>
+  <types:enrichment select="#a527ea7a-94b0-4974-b604-38d29fae258c"/>
 </types:mule>
